@@ -14,63 +14,58 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f9fafb;
+      background: #f0f2f5;
       padding: 20px;
       text-align: center;
-    }
-
-    h2 {
-      color: #333;
     }
 
     button {
       background-color: #0088cc;
       color: white;
       border: none;
-      padding: 14px 24px;
+      padding: 12px 24px;
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 30px;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #0070aa;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h2>👋 Telegram Mini App</h2>
-  <p id="welcome"></p>
+  <h2>🚀 Telegram Mini App</h2>
+  <p id="welcome">Loading...</p>
 
-  <!-- Button to Show Ad -->
-  <button onclick="showRewardedAd()">🎥 Watch Video Ad & Earn</button>
+  <button onclick="showRewardedAd()">🎥 Watch Ad to Earn</button>
 
   <script>
-    // Initialize Telegram WebApp
+    // Initialize Telegram
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Make full screen
+    tg.ready();  // Required by Telegram
+    tg.expand();
 
-    // Show user's name if available
-    if (tg.initDataUnsafe.user) {
-      document.getElementById("welcome").innerText =
-        "Welcome, " + tg.initDataUnsafe.user.first_name + "!";
+    const user = tg.initDataUnsafe.user;
+    if (user) {
+      document.getElementById("welcome").innerText = `Welcome, ${user.first_name || 'User'}!`;
+    } else {
+      document.getElementById("welcome").innerText = "Welcome, Guest!";
     }
 
-    // Show Giga.pub Rewarded Video Ad
+    // Show Rewarded Ad
     function showRewardedAd() {
-      Giga.showAd({
-        type: "rewarded",
-        onComplete: () => {
-          alert("✅ Ad completed! You've earned 10 points.");
-          // Add your own point system logic here if needed
-        },
-        onError: (err) => {
-          alert("❌ Ad failed to load. Try again later.");
-          console.error(err);
-        }
-      });
+      if (typeof Giga !== 'undefined') {
+        Giga.showAd({
+          type: "rewarded",
+          onComplete: () => {
+            alert("✅ Thanks! You've earned points.");
+          },
+          onError: (err) => {
+            console.error("Ad Error:", err);
+            alert("❌ Ad failed to load.");
+          }
+        });
+      } else {
+        alert("⚠️ Giga.pub SDK not loaded!");
+      }
     }
   </script>
 </body>
